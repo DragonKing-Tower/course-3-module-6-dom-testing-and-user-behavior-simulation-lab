@@ -1,34 +1,44 @@
-function addElementToDOM(targetDOM, inputString) {
-	const container = document.querySelector(`#${targetDOM}`);
+console.log("Loaded Index.js");
+
+const display = document.querySelector("#dynamic-content");
+
+const button = document.querySelector("#simulate-click");
+button.addEventListener("click", () => {
+	const input = document.querySelector("#user-input").value;
+	addElementToDOM(display, input);
+}); //adds functionality to button to submit and update the display
+
+const form = document.querySelector("#user-form");
+form.addEventListener("submit", (event) => {
+	event.preventDefault();
+	const input = document.querySelector("#user-input").value;
+	addElementToDOM(display, input);
+}); //adds functionality to form to submit and update the display
+
+function addElementToDOM(targetSelectedDOM, inputString) {
+	if (inputChecker(inputString) === false) {
+		return;
+	}
 	const newItem = document.createElement("p");
 	newItem.textContent = inputString;
-	container.append(newItem);
-}
+	targetSelectedDOM.append(newItem);
+} //adds the string to any specifiied element
 
-function removeElementFromDOM(targetDOM) {
-	const target = document.querySelector(`#${targetDOM}`);
-	target.remove();
-}
-
-function simulateClick(targetDOM, action) {
-	addElementToDOM(targetDOM, action);
-}
-
-function handleFormSubmit(targetInputDOM, targetDOM) {
-	const form = document.querySelector(`#${targetInputDOM}`);
-	const input = form.querySelector(
-		`input[type="text"], input#user-input`
-	).value;
-	if (input === "") {
-		addElementToDOM("error-message", "Input cannot be empty");
-		document.querySelector("#error-message").classList.remove("hidden");
+function removeElementsFromDOMParent(parent) {
+	while (parent.firstChild) {
+		parent.removeChild(parent.firstChild);
 	}
-	addElementToDOM(targetDOM, input);
-}
+} //removes content, so far only used for removing the errors
 
-module.exports = {
-	addElementToDOM,
-	removeElementFromDOM,
-	simulateClick,
-	handleFormSubmit,
-};
+function inputChecker(input) {
+	const error = document.querySelector("#error-message");
+	if (!input) {
+		addElementToDOM(error, "Input cannot be empty");
+		error.classList.remove("hidden");
+		return false;
+	} else {
+		removeElementsFromDOMParent(error);
+		error.classList.add("hidden");
+		return true;
+	}
+} //checks to make sure text is defined, returns true if everything is good, false if not
